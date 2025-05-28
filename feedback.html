@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Сайт о моих модах для Minecraft">
+    <title>Misha678</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f8f8f8;
+        }
+        header {
+            background: #222;
+            color: white;
+            padding: 20px;
+            font-size: 24px;
+        }
+        nav {
+            background: #444;
+            padding: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        main {
+            padding: 20px;
+        }
+        .mods {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .mod {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 250px;
+        }
+        .mod img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .contacts, .feedback-form {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        footer {
+            background: #222;
+            color: white;
+            padding: 10px;
+            position: relative;
+            width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="logo.jpg" alt="Логотип" style="height: 40px; vertical-align: middle;">
+        Misha678
+    </header>
+    <nav>
+        <a href="#">Главная</a>
+        <a href="#blocksdecorative">Моды</a>
+        <a href="#">Скачать</a>
+        <a href="contacts.html">Контакты</a>
+        <a href="feedback.html">Обратная связь</a>
+        <a href="https://www.donationalerts.com/r/fursiksads">Донаты</a>
+    </nav>
+    <main>
+
+        <!-- Форма обратной связи -->
+        <div id="feedback" class="feedback-form">
+            <h2>Обратная связь</h2>
+            <form action="#" method="POST">
+                <div>
+                    <label for="name">Имя:</label><br>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div>
+                    <label for="email">Email:</label><br>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="message">Сообщение:</label><br>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn">Отправить</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        &copy; 2025 Misha678 - Все права защищены
+    </footer>
+</body>
+</html>
+
