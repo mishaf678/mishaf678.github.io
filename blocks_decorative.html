@@ -32,6 +32,11 @@
             width: 250px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .gallery img:hover {
+            transform: scale(1.03);
         }
         .btn-download {
             display: inline-block;
@@ -49,6 +54,37 @@
             padding: 10px;
             margin-top: 20px;
         }
+        
+        /* Стили для модального окна */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            text-align: center;
+        }
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            margin: auto;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -57,14 +93,14 @@
     </header>
     <main>
         <h2>Blocks Decorative</h2>
-        <img src="decoratik (4).png">
+        <img src="decoratik (4).png" class="enlargeable" onclick="enlargeImage(this)">
         <p>Blocks Decorative - это мод, который добавляет в Minecraft множество декоративных блоков для украшения построек.</p>
         
         <h2>Галерея</h2>
         <div class="gallery">
-            <img src="decoratik1.png" alt="Блоки">
-            <img src="decoratik2.png" alt="декор">
-            <img src="decoratik3.png" alt="">
+            <img src="Blocks.png" alt="Блоки" class="enlargeable" onclick="enlargeImage(this)">
+            <img src="decoratik2.png" alt="декор" class="enlargeable" onclick="enlargeImage(this)">
+            <img src="decoratik3.png" alt="" class="enlargeable" onclick="enlargeImage(this)">
         </div>
         
         <a href="BlocksDecorative.jar" class="btn-download" download>Скачать мод</a>
@@ -73,5 +109,33 @@
     <footer>
         &copy; 2025 Misha678 - Все права защищены
     </footer>
+    
+    <!-- Модальное окно для увеличенного изображения -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+    
+    <script>
+        function enlargeImage(img) {
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("modalImage");
+            
+            modal.style.display = "block";
+            modalImg.src = img.src;
+        }
+        
+        function closeModal() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+        
+        // Закрытие модального окна при клике вне изображения
+        window.onclick = function(event) {
+            var modal = document.getElementById("imageModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
