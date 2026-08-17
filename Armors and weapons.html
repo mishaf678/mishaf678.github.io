@@ -100,6 +100,7 @@
             border: 1px solid var(--btn-theme-border); color: var(--text-header);
             padding: 6px 16px; border-radius: 20px; cursor: pointer;
             display: flex; align-items: center; gap: 6px; z-index: 10;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .theme-toggle-btn:hover {
@@ -122,9 +123,9 @@
         nav a { color: var(--text-nav); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s ease; }
         nav a:hover, .dropdown:hover .dropdown-btn { color: var(--btn-green-bg); }
 
-        /* Выпадающее меню с плавной анимацией и мостиком */
+        /* Выпадающее меню с плавной анимацией */
         .dropdown { position: relative; display: inline-block; }
-        .dropdown-btn { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+        .dropdown-btn { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
         
         .dropdown-content {
             position: absolute; 
@@ -147,8 +148,15 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Открытие при наведении ИЛИ клике */
-        .dropdown:hover .dropdown-content,
+        /* Открытие на ПК при наведении, на тач-устройствах через класс .active */
+        @media (hover: hover) {
+            .dropdown:hover .dropdown-content { 
+                opacity: 1; 
+                visibility: visible; 
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
         .dropdown.active .dropdown-content { 
             opacity: 1; 
             visibility: visible; 
@@ -242,6 +250,7 @@
             cursor: pointer;
             border: 1px solid var(--btn-border);
             transition: transform 0.2s ease, opacity 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .gallery-thumb:hover {
@@ -303,8 +312,14 @@
             gap: 4px;
         }
 
-        /* Открытие при наведении ИЛИ клике */
-        .download-dropdown:hover .download-dropdown-content,
+        @media (hover: hover) {
+            .download-dropdown:hover .download-dropdown-content {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+        }
+
         .download-dropdown.active .download-dropdown-content {
             opacity: 1;
             visibility: visible;
@@ -372,7 +387,7 @@
         } 
     </style>
 </head>
-<body>
+<body ontouchstart="">
 
     <header>
         <div class="logo-container">
@@ -443,7 +458,6 @@
     <footer>&copy; 2026 Misha678 - Все права защищены</footer>
 
     <script>
-        // Логика модального окна для увеличения картинок
         function openModal(src) {
             const modal = document.getElementById('imageModal');
             const modalImg = document.getElementById('modalImg');
@@ -456,43 +470,53 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Выпадающее меню в навигации ("Моды ▾")
             const navDropdown = document.querySelector('nav .dropdown');
             const navDropdownBtn = document.querySelector('nav .dropdown-btn');
-
-            if (navDropdownBtn && navDropdown) {
-                navDropdownBtn.addEventListener('click', (e) => {
-                    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
-                        if (!navDropdown.classList.contains('active')) {
-                            e.preventDefault();
-                            navDropdown.classList.add('active');
-                        }
-                    }
-                });
-            }
-
-            // 2. Кнопка "Скачать ▾"
             const downloadDropdown = document.getElementById('downloadDropdown');
             const downloadBtn = document.getElementById('downloadBtn');
 
-            if (downloadBtn && downloadDropdown) {
-                downloadBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    downloadDropdown.classList.toggle('active');
-                });
+            // Универсальный обработчик тапов/кликов для открывания выпадающих списков
+            function handleToggle(e, dropdownEl) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Если кликнутый выпадающий список уже открыт — закрываем, иначе открываем его и закрываем остальные
+                const isActive = dropdownEl.classList.contains('active');
+                
+                if (navDropdown) navDropdown.classList.remove('active');
+                if (downloadDropdown) downloadDropdown.classList.remove('active');
+
+                if (!isActive) {
+                    dropdownEl.classList.add('active');
+                }
             }
 
-            // 3. Закрытие всех меню при клике/тапе мимо элементов
-            document.addEventListener('click', (e) => {
+            // 1. Выпадающее меню "Моды ▾"
+            if (navDropdownBtn && navDropdown) {
+                const eventType = ('ontouchstart' in window) ? 'touchstart' : 'click';
+                navDropdownBtn.addEventListener(eventType, (e) => handleToggle(e, navDropdown));
+            }
+
+            // 2. Выпадающее меню "Скачать ▾"
+            if (downloadBtn && downloadDropdown) {
+                const eventType = ('ontouchstart' in window) ? 'touchstart' : 'click';
+                downloadBtn.addEventListener(eventType, (e) => handleToggle(e, downloadDropdown));
+            }
+
+            // 3. Закрытие меню при тапе/клике в любую другую область
+            const closeAllMenus = (e) => {
                 if (navDropdown && !navDropdown.contains(e.target)) {
                     navDropdown.classList.remove('active');
                 }
                 if (downloadDropdown && !downloadDropdown.contains(e.target)) {
                     downloadDropdown.classList.remove('active');
                 }
-            });
+            };
 
-            // 4. Переключение тем
+            document.addEventListener('click', closeAllMenus);
+            document.addEventListener('touchstart', closeAllMenus, { passive: true });
+
+            // 4. Переключение темы
             const themeBtn = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
             const themeText = document.getElementById('themeText');
@@ -513,7 +537,8 @@
             const currentTheme = htmlElement.getAttribute('data-theme') || 'dark';
             updateThemeUI(currentTheme);
 
-            themeBtn.addEventListener('click', () => {
+            const toggleTheme = (e) => {
+                e.preventDefault();
                 const activeTheme = htmlElement.getAttribute('data-theme');
                 const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
                 
@@ -522,10 +547,12 @@
 
                 try {
                     localStorage.setItem('theme', newTheme);
-                } catch (e) {
-                    console.warn('Не удалось сохранить тему:', e);
+                } catch (err) {
+                    console.warn('Не удалось сохранить тему:', err);
                 }
-            });
+            };
+
+            themeBtn.addEventListener('click', toggleTheme);
         });
     </script>
 </body>
