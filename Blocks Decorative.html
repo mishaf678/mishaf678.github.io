@@ -147,7 +147,9 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .dropdown:hover .dropdown-content { 
+        /* Открытие при наведении ИЛИ клике */
+        .dropdown:hover .dropdown-content,
+        .dropdown.active .dropdown-content { 
             opacity: 1; 
             visibility: visible; 
             transform: translateX(-50%) translateY(0);
@@ -301,7 +303,7 @@
             gap: 4px;
         }
 
-        /* Показываем меню при наведении ИЛИ при добавлении класса .active через JS */
+        /* Открытие при наведении ИЛИ клике */
         .download-dropdown:hover .download-dropdown-content,
         .download-dropdown.active .download-dropdown-content {
             opacity: 1;
@@ -442,7 +444,7 @@
     <footer>&copy; 2026 Misha678 - Все права защищены</footer>
 
     <script>
-        // Логика модального окна для увеличения картинок
+        // Просмотр изображений в галерее
         function openModal(src) {
             const modal = document.getElementById('imageModal');
             const modalImg = document.getElementById('modalImg');
@@ -454,8 +456,23 @@
             document.getElementById('imageModal').style.display = 'none';
         }
 
-        // Переключение меню скачивания по клику/тапу (для адаптации под iOS Safari)
         document.addEventListener('DOMContentLoaded', () => {
+            // 1. Выпадающее меню в навигации ("Моды ▾")
+            const navDropdown = document.querySelector('nav .dropdown');
+            const navDropdownBtn = document.querySelector('nav .dropdown-btn');
+
+            if (navDropdownBtn && navDropdown) {
+                navDropdownBtn.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+                        if (!navDropdown.classList.contains('active')) {
+                            e.preventDefault();
+                            navDropdown.classList.add('active');
+                        }
+                    }
+                });
+            }
+
+            // 2. Кнопка "Скачать ▾"
             const downloadDropdown = document.getElementById('downloadDropdown');
             const downloadBtn = document.getElementById('downloadBtn');
 
@@ -464,16 +481,19 @@
                     e.stopPropagation();
                     downloadDropdown.classList.toggle('active');
                 });
-
-                // Закрываем меню при клике в любое другое место
-                document.addEventListener('click', (e) => {
-                    if (!downloadDropdown.contains(e.target)) {
-                        downloadDropdown.classList.remove('active');
-                    }
-                });
             }
 
-            // Переключение тем
+            // 3. Закрытие всех меню при клике/тапе мимо элементов
+            document.addEventListener('click', (e) => {
+                if (navDropdown && !navDropdown.contains(e.target)) {
+                    navDropdown.classList.remove('active');
+                }
+                if (downloadDropdown && !downloadDropdown.contains(e.target)) {
+                    downloadDropdown.classList.remove('active');
+                }
+            });
+
+            // 4. Переключение тёмной/светлой темы
             const themeBtn = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
             const themeText = document.getElementById('themeText');
