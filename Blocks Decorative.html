@@ -269,6 +269,8 @@
             font-size: 14px;
             transition: background 0.2s ease, transform 0.2s ease;
             cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .download-btn:hover {
@@ -299,7 +301,9 @@
             gap: 4px;
         }
 
-        .download-dropdown:hover .download-dropdown-content {
+        /* Показываем меню при наведении ИЛИ при добавлении класса .active через JS */
+        .download-dropdown:hover .download-dropdown-content,
+        .download-dropdown.active .download-dropdown-content {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -414,8 +418,8 @@
                 </div>
 
                 <!-- Кнопка скачивания с выпадающим меню -->
-                <div class="download-dropdown">
-                    <div class="download-btn">
+                <div class="download-dropdown" id="downloadDropdown">
+                    <div class="download-btn" id="downloadBtn">
                         <i class="fas fa-download"></i> Скачать ▾
                     </div>
                     <div class="download-dropdown-content">
@@ -450,8 +454,26 @@
             document.getElementById('imageModal').style.display = 'none';
         }
 
-        // Переключение тем
+        // Переключение меню скачивания по клику/тапу (для адаптации под iOS Safari)
         document.addEventListener('DOMContentLoaded', () => {
+            const downloadDropdown = document.getElementById('downloadDropdown');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            if (downloadBtn && downloadDropdown) {
+                downloadBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    downloadDropdown.classList.toggle('active');
+                });
+
+                // Закрываем меню при клике в любое другое место
+                document.addEventListener('click', (e) => {
+                    if (!downloadDropdown.contains(e.target)) {
+                        downloadDropdown.classList.remove('active');
+                    }
+                });
+            }
+
+            // Переключение тем
             const themeBtn = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
             const themeText = document.getElementById('themeText');
