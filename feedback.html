@@ -186,6 +186,7 @@
         
         .btn { display: block; width: 100%; padding: 12px; background: var(--btn-green-bg); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.2s ease; }
         .btn:hover { background: var(--btn-green-hover); }
+        .btn:disabled { background: #6c757d; cursor: not-allowed; }
         
         footer { background: var(--bg-header); color: var(--text-header); padding: 20px 0; text-align: center; z-index: 10; }
     </style>
@@ -237,7 +238,7 @@
                     <label for="message">Сообщение:</label>
                     <textarea id="message" name="Сообщение" rows="5" required></textarea>
                 </div>
-                <button type="submit" class="btn">Отправить</button>
+                <button type="submit" class="btn" id="submitBtn">Отправить</button>
             </form>
             <div id="successMessage" style="display:none; color: #28a745; margin-top:20px;">✓ Сообщение отправлено!</div>
         </div>
@@ -275,12 +276,41 @@
             });
         });
 
+        // Ссылка на ваш скрипт Google Apps Script
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby-RJYw8C3NcbFpSzANUz5j1O8Y6biydvobixvb-woNGQZySxmUkiqCAm2VNCyIcKIm/exec";
+
         const form = document.getElementById('feedbackForm');
-        form.addEventListener('submit', (e) => {
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            alert("Сообщение отправлено!");
-            form.style.display = 'none';
-            document.getElementById('successMessage').style.display = 'block';
+
+            // Блокируем кнопку на время отправки
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Отправка...';
+
+            const payload = {
+                name: document.getElementById('name').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                // Успешный результат
+                form.style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+            } catch (error) {
+                alert('Произошла ошибка при отправке. Попробуйте еще раз.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Отправить';
+            }
         });
     </script>
 </body>
