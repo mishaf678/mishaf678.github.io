@@ -147,7 +147,9 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .dropdown:hover .dropdown-content { 
+        /* Открытие при наведении ИЛИ клике */
+        .dropdown:hover .dropdown-content,
+        .dropdown.active .dropdown-content { 
             opacity: 1; 
             visibility: visible; 
             transform: translateX(-50%) translateY(0);
@@ -269,6 +271,8 @@
             font-size: 14px;
             transition: background 0.2s ease, transform 0.2s ease;
             cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .download-btn:hover {
@@ -299,7 +303,9 @@
             gap: 4px;
         }
 
-        .download-dropdown:hover .download-dropdown-content {
+        /* Открытие при наведении ИЛИ клике */
+        .download-dropdown:hover .download-dropdown-content,
+        .download-dropdown.active .download-dropdown-content {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -414,13 +420,14 @@
                 </div>
 
                 <!-- Кнопка скачивания с выпадающим меню -->
-                <div class="download-dropdown">
-                    <div class="download-btn">
+                <div class="download-dropdown" id="downloadDropdown">
+                    <div class="download-btn" id="downloadBtn">
                         <i class="fas fa-download"></i> Скачать ▾
                     </div>
                     <div class="download-dropdown-content">
                         <div class="download-dropdown-inner">
                             <a href="https://www.curseforge.com/minecraft/mc-mods/armors-and-weapons/files/all?page=1&pageSize=20&showAlphaFiles=hid" target="_blank" class="download-option-btn">CurseForge</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -448,8 +455,44 @@
             document.getElementById('imageModal').style.display = 'none';
         }
 
-        // Переключение тем
         document.addEventListener('DOMContentLoaded', () => {
+            // 1. Выпадающее меню в навигации ("Моды ▾")
+            const navDropdown = document.querySelector('nav .dropdown');
+            const navDropdownBtn = document.querySelector('nav .dropdown-btn');
+
+            if (navDropdownBtn && navDropdown) {
+                navDropdownBtn.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+                        if (!navDropdown.classList.contains('active')) {
+                            e.preventDefault();
+                            navDropdown.classList.add('active');
+                        }
+                    }
+                });
+            }
+
+            // 2. Кнопка "Скачать ▾"
+            const downloadDropdown = document.getElementById('downloadDropdown');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            if (downloadBtn && downloadDropdown) {
+                downloadBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    downloadDropdown.classList.toggle('active');
+                });
+            }
+
+            // 3. Закрытие всех меню при клике/тапе мимо элементов
+            document.addEventListener('click', (e) => {
+                if (navDropdown && !navDropdown.contains(e.target)) {
+                    navDropdown.classList.remove('active');
+                }
+                if (downloadDropdown && !downloadDropdown.contains(e.target)) {
+                    downloadDropdown.classList.remove('active');
+                }
+            });
+
+            // 4. Переключение тем
             const themeBtn = document.getElementById('themeToggle');
             const themeIcon = document.getElementById('themeIcon');
             const themeText = document.getElementById('themeText');
