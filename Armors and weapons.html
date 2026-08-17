@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Мод для Minecraft — Misha678">
+    <title>Пример Мода #1 — Misha678</title>
+
+    <!-- Подключение библиотеки иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+
+    <style>
+        :root {
+            --bg-body: #f4f6f8;
+            --bg-main: #ffffff;
+            --text-main: #222222;
+            --text-header: #ffffff;
+            --bg-header: #181818; 
+            --bg-nav: #222222;
+            --text-nav: #ffffff;
+            --input-bg: #f0f2f5;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --btn-green-bg: #28a745;
+            --btn-green-hover: #218838;
+            --btn-border: #cbd5e1;
+            --btn-theme-border: rgba(255, 255, 255, 0.3);
+            --bg-overlay-opacity: 0.15;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-main: #1e1e1e;
+            --text-main: #e0e0e0;
+            --input-bg: #2b2b2b;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --btn-border: #333333;
+            --bg-overlay-opacity: 0.5;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0; padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image: url("background.png");
+            background-size: cover; 
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: var(--bg-overlay-opacity);
+            transition: opacity 0.3s ease;
+        }
+
+        /* Шапка */
+        header {
+            background: var(--bg-header);
+            color: var(--text-header);
+            height: 70px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 12px; font-weight: bold; font-size: 22px; }
+        .logo-container img { height: 32px; width: 32px; border-radius: 4px; object-fit: cover; }
+
+        .theme-toggle-btn {
+            position: absolute; right: 24px; background: transparent;
+            border: 1px solid var(--btn-theme-border); color: var(--text-header);
+            padding: 6px 16px; border-radius: 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; z-index: 10;
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--text-header);
+        }
+
+        /* Навигация */
+        nav {
+            background: var(--bg-nav);
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        nav a { color: var(--text-nav); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s ease; }
+        nav a:hover, .dropdown:hover .dropdown-btn { color: var(--btn-green-bg); }
+
+        /* Выпадающее меню с плавной анимацией и мостиком */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-btn { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+        
+        .dropdown-content {
+            position: absolute; 
+            top: 100%; 
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            padding-top: 10px;
+            z-index: 100; 
+            opacity: 0; 
+            visibility: hidden;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+        }
+
+        .dropdown-inner {
+            background-color: var(--bg-header);
+            min-width: 150px;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            padding: 6px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown:hover .dropdown-content { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-inner a { 
+            color: var(--text-header); 
+            padding: 10px 16px; 
+            text-decoration: none; 
+            display: block; 
+            font-size: 14px; 
+            text-align: center; 
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        
+        .dropdown-inner a:hover { 
+            background-color: rgba(255, 255, 255, 0.1); 
+            color: var(--btn-green-bg) !important; 
+        }
+
+        /* Контент */
+        main { 
+            padding: 40px 20px; 
+            flex: 1 0 auto; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1;
+        }
+        
+        .welcome-section {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 30px 25px;
+            background: var(--bg-main);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--btn-border);
+            text-align: center;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .mod-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            text-align: center;
+        }
+
+        .mod-image {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--btn-border);
+        }
+
+        .mod-info {
+            width: 100%;
+        }
+
+        .mod-info h2 {
+            margin: 0 0 8px 0;
+            font-size: 22px;
+            color: var(--text-main);
+        }
+
+        .mod-info p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.5;
+            opacity: 0.85;
+        }
+
+        /* Галерея маленьких фоток */
+        .mod-gallery {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .gallery-thumb {
+            width: calc(33.333% - 7px);
+            height: 65px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 1px solid var(--btn-border);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .gallery-thumb:hover {
+            transform: scale(1.05);
+            opacity: 0.85;
+        }
+
+        /* Выпадающее меню для кнопки скачать */
+        .download-dropdown {
+            position: relative;
+            width: 100%;
+            display: inline-block;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 10px 16px;
+            background: var(--btn-green-bg);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: background 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .download-btn:hover {
+            background: var(--btn-green-hover);
+        }
+
+        .download-dropdown-content {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            padding-top: 8px;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px);
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+        }
+
+        .download-dropdown-inner {
+            background: var(--bg-main);
+            border: 1px solid var(--btn-border);
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .download-dropdown:hover .download-dropdown-content {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .download-option-btn {
+            display: block;
+            padding: 8px 12px;
+            background: var(--btn-green-bg);
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .download-option-btn:hover {
+            background: var(--btn-green-hover);
+        }
+
+        /* Модальное окно для увеличенного просмотра */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .image-modal-content {
+            max-width: 90%;
+            max-height: 90vh;
+            border-radius: 8px;
+            object-fit: contain;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 25px; right: 35px;
+            color: #fff;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .image-modal-close:hover {
+            color: var(--btn-green-bg);
+        }
+
+        footer { 
+            background: var(--bg-header); 
+            color: var(--text-header); 
+            padding: 20px 0; 
+            text-align: center; 
+            z-index: 10; 
+        } 
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="logo.webp" alt="Misha678 Logo">
+            <span>Misha678</span>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggle">
+            <span id="themeIcon">☀️</span>
+            <span id="themeText">Светлая</span>
+        </button>
+    </header>
+
+    <nav>
+        <a href="index.html">Главная</a>
+        <div class="dropdown">
+            <a href="Minecraft.html" class="dropdown-btn">Моды ▾</a>
+            <div class="dropdown-content">
+                <div class="dropdown-inner">
+                    <a href="Minecraft.html">Minecraft</a>
+                </div>
+            </div>
+        </div>
+        <a href="contacts.html">Контакты</a>
+        <a href="feedback.html">Обратная связь</a>
+        <a href="https://www.donationalerts.com/r/fursiksads" target="_blank">Донаты</a>
+    </nav>
+
+    <main>
+        <section class="welcome-section">
+            <div class="mod-container">
+                <!-- Главная картинка мода -->
+                <img src="Armors.jpg" alt="Мод 1" class="mod-image">
+                
+                <!-- Описание -->
+                <div class="mod-info">
+                    <h2>Armors and weapons</h2>
+                    <p>• Добавляет новую броню, уникальные механизмы и улучшает игровой процесс.</p>
+                </div>
+
+                <!-- 3 маленькие фотографии (Галерея) -->
+                <div class="mod-gallery">
+                    <img src="mod1_thumb1.jpg" alt="Скриншот 1" class="gallery-thumb" onclick="openModal(this.src)">
+                    <img src="mod1_thumb2.jpg" alt="Скриншот 2" class="gallery-thumb" onclick="openModal(this.src)">
+                    <img src="mod1_thumb3.jpg" alt="Скриншот 3" class="gallery-thumb" onclick="openModal(this.src)">
+                </div>
+
+                <!-- Кнопка скачивания с выпадающим меню -->
+                <div class="download-dropdown">
+                    <div class="download-btn">
+                        <i class="fas fa-download"></i> Скачать ▾
+                    </div>
+                    <div class="download-dropdown-content">
+                        <div class="download-dropdown-inner">
+                            <a href="Armors 1.0-v1.12.2..jar" download class="download-option-btn">Версия мода 1.0 для Forge Версия майна 1.12.2</a>
+                            <a href="Armors 1.0-v1.21.4..jar" download class="download-option-btn">Версия мода 1.0 для Neoforge Версия майна 1.21.4</a>
+                            <a href="https://www.curseforge.com/minecraft/mc-mods/armors-and-weapons/files/all?page=1&pageSize=20&showAlphaFiles=hid" target="_blank" class="download-option-btn">Скачать на другом сайте Curseforge</a>
+                            <a href="https://www.curseforge.com/minecraft/mc-mods/armors-and-weapons/files/all?page=1&pageSize=20&showAlphaFiles=hid" target="_blank" class="download-option-btn">Скачать на другом сайте Modrinth</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Модальное окно для увеличенного просмотра -->
+    <div id="imageModal" class="image-modal" onclick="closeModal()">
+        <span class="image-modal-close">&times;</span>
+        <img class="image-modal-content" id="modalImg">
+    </div>
+
+    <footer>&copy; 2026 Misha678 - Все права защищены</footer>
+
+    <script>
+        // Логика модального окна для увеличения картинок
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modal.style.display = 'flex';
+            modalImg.src = src;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = 'none';
+        }
+
+        // Переключение тем
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeBtn = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            const htmlElement = document.documentElement;
+
+            if (!themeBtn || !themeIcon || !themeText) return;
+
+            function updateThemeUI(theme) {
+                if (theme === 'dark') {
+                    themeIcon.textContent = '☀️';
+                    themeText.textContent = 'Светлая';
+                } else {
+                    themeIcon.textContent = '🌙';
+                    themeText.textContent = 'Тёмная';
+                }
+            }
+
+            const currentTheme = htmlElement.getAttribute('data-theme') || 'dark';
+            updateThemeUI(currentTheme);
+
+            themeBtn.addEventListener('click', () => {
+                const activeTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
+                
+                htmlElement.setAttribute('data-theme', newTheme);
+                updateThemeUI(newTheme);
+
+                try {
+                    localStorage.setItem('theme', newTheme);
+                } catch (e) {
+                    console.warn('Не удалось сохранить тему:', e);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

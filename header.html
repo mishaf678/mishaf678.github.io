@@ -1,0 +1,83 @@
+<header>
+    <div class="logo-container">
+        <img src="logo.png" alt="Misha678 Logo">
+        <span>Misha678</span>
+    </div>
+    <button class="theme-toggle-btn" id="themeToggle">
+        <span id="themeIcon">🌙</span>
+        <span id="themeText">Тёмная</span>
+    </button>
+</header>
+
+<nav>
+    <a href="index.html">Главная</a>
+    <a href="index.html#mods">Моды</a>
+    <a href="#">Скачать</a>
+    <a href="contacts.html">Контакты</a>
+    <a href="feedback.html">Обратная связь</a>
+    <a href="https://www.donationalerts.com/r/fursiksads" target="_blank">Донаты</a>
+</nav>
+/* Жёсткая фиксация размеров шапки и меню для всех страниц */
+header {
+    background: var(--bg-header, #181818);
+    color: var(--text-header, #ffffff);
+    height: 70px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.logo-container img {
+    height: 32px;
+    width: 32px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.theme-toggle-btn {
+    position: absolute;
+    right: 24px;
+    background: transparent;
+    border: 1px solid var(--btn-theme-border, rgba(255, 255, 255, 0.3));
+    color: var(--text-header, #ffffff);
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    z-index: 10;
+}
+
+nav {
+    background: var(--bg-nav, #222222);
+    height: 48px;
+    padding: 0 10px;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+nav a {
+    color: var(--text-nav, #ffffff);
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+}

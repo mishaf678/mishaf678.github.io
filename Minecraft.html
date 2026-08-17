@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Сайт о моих модах для Minecraft">
+    <title>Мои моды — Misha678</title>
+
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+
+    <style>
+        :root {
+            --bg-body: #f4f6f8;
+            --bg-main: #ffffff;
+            --text-main: #222222;
+            --text-header: #ffffff;
+            --bg-header: #181818; 
+            --bg-nav: #222222;
+            --text-nav: #ffffff;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --btn-green-bg: #28a745;
+            --btn-green-hover: #218838;
+            --btn-border: #cbd5e1;
+            --bg-overlay-opacity: 0.15;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-main: #1e1e1e;
+            --text-main: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --btn-border: #333333;
+            --bg-overlay-opacity: 0.5;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0; padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image: url("background.png");
+            background-size: cover; 
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: var(--bg-overlay-opacity);
+            transition: opacity 0.3s ease;
+        }
+
+        /* Шапка */
+        header {
+            background: var(--bg-header);
+            color: var(--text-header);
+            height: 70px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 12px; font-weight: bold; font-size: 22px; }
+        .logo-container img { height: 32px; width: 32px; border-radius: 4px; object-fit: cover; }
+
+        .theme-toggle-btn {
+            position: absolute; right: 24px; background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3); color: var(--text-header);
+            padding: 6px 16px; border-radius: 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 6px;
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--text-header);
+        }
+
+        /* Навигация */
+        nav {
+            background: var(--bg-nav);
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        nav a { color: var(--text-nav); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s ease; }
+        nav a:hover, .dropdown:hover .dropdown-btn { color: var(--btn-green-bg); }
+
+        /* Выпадающее меню с плавной анимацией и мостиком */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-btn { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+        
+        .dropdown-content {
+            position: absolute; 
+            top: 100%; 
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            padding-top: 10px;
+            z-index: 100; 
+            opacity: 0; 
+            visibility: hidden;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+        }
+
+        .dropdown-inner {
+            background-color: var(--bg-header);
+            min-width: 150px;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            padding: 6px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown:hover .dropdown-content { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-inner a { 
+            color: var(--text-header); 
+            padding: 10px 16px; 
+            text-decoration: none; 
+            display: block; 
+            font-size: 14px; 
+            text-align: center; 
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        
+        .dropdown-inner a:hover { 
+            background-color: rgba(255, 255, 255, 0.1); 
+            color: var(--btn-green-bg) !important; 
+        }
+
+        /* Контент / Карточки модов */
+        main { padding: 40px 20px; flex: 1; display: flex; flex-direction: column; align-items: center; z-index: 1; }
+        
+        main h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 26px;
+            color: var(--text-main);
+        }
+
+        .mods {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .mod {
+            background: var(--bg-main);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--btn-border);
+            width: 250px;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.3s ease;
+        }
+
+        .mod:hover {
+            transform: translateY(-4px);
+        }
+
+        .mod img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            background-color: #2b2b2b;
+        }
+
+        .mod p {
+            margin: 15px 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 10px 0;
+            background: var(--btn-green-bg);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background 0.2s ease;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background: var(--btn-green-hover);
+        }
+
+        footer { background: var(--bg-header); color: var(--text-header); padding: 20px 0; text-align: center; z-index: 10; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="logo.webp" alt="Misha678 Logo">
+            <span>Misha678</span>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggle">
+            <span id="themeIcon">☀️</span>
+            <span id="themeText">Светлая</span>
+        </button>
+    </header>
+
+    <nav>
+        <a href="index.html">Главная</a>
+        <div class="dropdown">
+            <a href="Minecraft.html" class="dropdown-btn">Моды ▾</a>
+            <div class="dropdown-content">
+                <div class="dropdown-inner">
+                    <a href="Minecraft.html">Minecraft</a>
+                </div>
+            </div>
+        </div>
+        <a href="contacts.html">Контакты</a>
+        <a href="feedback.html">Обратная связь</a>
+        <a href="https://www.donationalerts.com/r/fursiksads" target="_blank">Донаты</a>
+    </nav>
+
+    <main>
+        <h2>Мои моды</h2>
+        
+        <div class="mods">
+            <div class="mod">
+                <img src="Decoratik (4).png" alt="Blocks Decorative">
+                <p>Blocks Decorative</p>
+                <a href="Blocks Decorative.html" class="btn">Подробнее</a>
+            </div>
+
+            <div class="mod">
+                <img src="armors.jpg" alt="Armors and weapons">
+                <p>Armors and weapons</p>
+                <a href="Armors and weapons.html" class="btn">Подробнее</a>
+            </div>
+
+            <div class="mod">
+                <img src="https://via.placeholder.com/250x160" alt="Новые двери">
+                <p>В разработке !</p>
+                <a href="#" class="btn">Подробнее</a>
+            </div>
+        </div>
+    </main>
+
+    <footer>&copy; 2026 Misha678 - Все права защищены</footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeBtn = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            const htmlElement = document.documentElement;
+
+            if (!themeBtn || !themeIcon || !themeText) return;
+
+            function updateThemeUI(theme) {
+                if (theme === 'dark') {
+                    themeIcon.textContent = '☀️';
+                    themeText.textContent = 'Светлая';
+                } else {
+                    themeIcon.textContent = '🌙';
+                    themeText.textContent = 'Тёмная';
+                }
+            }
+
+            const currentTheme = htmlElement.getAttribute('data-theme') || 'dark';
+            updateThemeUI(currentTheme);
+
+            themeBtn.addEventListener('click', () => {
+                const activeTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
+                
+                htmlElement.setAttribute('data-theme', newTheme);
+                updateThemeUI(newTheme);
+
+                try {
+                    localStorage.setItem('theme', newTheme);
+                } catch (e) {
+                    console.warn('Не удалось сохранить тему:', e);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

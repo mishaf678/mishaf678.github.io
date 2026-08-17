@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Добро пожаловать на сайт Misha678">
+    <title>Добро пожаловать — Misha678</title>
+
+    <!-- Подключение библиотеки иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <script>
+        (function() {
+            try {
+                const savedTheme = localStorage.getItem('theme') || 'dark';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            } catch (e) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+
+    <style>
+        :root {
+            --bg-body: #f4f6f8;
+            --bg-main: #ffffff;
+            --text-main: #222222;
+            --text-header: #ffffff;
+            --bg-header: #181818; 
+            --bg-nav: #222222;
+            --text-nav: #ffffff;
+            --input-bg: #ffffff;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --btn-green-bg: #28a745;
+            --btn-green-hover: #218838;
+            --btn-border: #cbd5e1;
+            --btn-theme-border: rgba(255, 255, 255, 0.3);
+            --bg-overlay-opacity: 0.15;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-main: #1e1e1e;
+            --text-main: #e0e0e0;
+            --input-bg: #2b2b2b;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --btn-border: #333333;
+            --bg-overlay-opacity: 0.5;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            margin: 0; padding: 0;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image: url("background.png");
+            background-size: cover; 
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: var(--bg-overlay-opacity);
+            transition: opacity 0.3s ease;
+        }
+
+        /* Шапка */
+        header {
+            background: var(--bg-header);
+            color: var(--text-header);
+            height: 70px;
+            padding: 0 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 12px; font-weight: bold; font-size: 22px; }
+        .logo-container img { height: 32px; width: 32px; border-radius: 4px; object-fit: cover; }
+
+        .theme-toggle-btn {
+            position: absolute; right: 24px; background: transparent;
+            border: 1px solid var(--btn-theme-border); color: var(--text-header);
+            padding: 6px 16px; border-radius: 20px; cursor: pointer;
+            display: flex; align-items: center; gap: 6px; z-index: 10;
+        }
+
+        .theme-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--text-header);
+        }
+
+        /* Навигация */
+        nav {
+            background: var(--bg-nav);
+            height: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 24px;
+            position: relative;
+            z-index: 10;
+        }
+
+        nav a { color: var(--text-nav); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s ease; }
+        nav a:hover, .dropdown:hover .dropdown-btn { color: var(--btn-green-bg); }
+
+        /* Выпадающее меню с плавной анимацией и мостиком */
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-btn { display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+        
+        .dropdown-content {
+            position: absolute; 
+            top: 100%; 
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            padding-top: 10px;
+            z-index: 100; 
+            opacity: 0; 
+            visibility: hidden;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+        }
+
+        .dropdown-inner {
+            background-color: var(--bg-header);
+            min-width: 150px;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+            padding: 6px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown:hover .dropdown-content { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .dropdown-inner a { 
+            color: var(--text-header); 
+            padding: 10px 16px; 
+            text-decoration: none; 
+            display: block; 
+            font-size: 14px; 
+            text-align: center; 
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        
+        .dropdown-inner a:hover { 
+            background-color: rgba(255, 255, 255, 0.1); 
+            color: var(--btn-green-bg) !important; 
+        }
+
+        /* Контент */
+        main { 
+            padding: 40px 20px; 
+            flex: 1 0 auto; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1;
+        }
+        
+        .welcome-section {
+            width: 100%;
+            max-width: 460px;
+            margin: 0 auto;
+            padding: 30px 25px;
+            background: var(--bg-main);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--btn-border);
+            text-align: center;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .welcome-section h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: var(--text-main);
+        }
+
+        .site-description {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            opacity: 0.85;
+        }
+
+        /* Кнопки соцсетей */
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 8px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--btn-border);
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        [data-theme="dark"] .social-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .social-btn.youtube { color: #ff0000; }
+        .social-btn.discord { color: #5865F2; }
+        .social-btn.telegram { color: #0088cc; }
+
+        footer { 
+            background: var(--bg-header); 
+            color: var(--text-header); 
+            padding: 20px 0; 
+            text-align: center; 
+            z-index: 10; 
+        } 
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <img src="logo.webp" alt="Misha678 Logo">
+            <span>Misha678</span>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggle">
+            <span id="themeIcon">☀️</span>
+            <span id="themeText">Светлая</span>
+        </button>
+    </header>
+
+    <nav>
+        <a href="index.html">Главная</a>
+        <div class="dropdown">
+            <a href="Minecraft.html" class="dropdown-btn">Моды ▾</a>
+            <div class="dropdown-content">
+                <div class="dropdown-inner">
+                    <a href="Minecraft.html">Minecraft</a>
+                </div>
+            </div>
+        </div>
+        <a href="contacts.html">Контакты</a>
+        <a href="feedback.html">Обратная связь</a>
+        <a href="https://www.donationalerts.com/r/fursiksads" target="_blank">Донаты</a>
+    </nav>
+
+    <main>
+        <section class="welcome-section">
+            <h2>Мои соцсети</h2>
+            <p class="site-description">
+                Подписывайтесь и связывайтесь со мной на удобных площадках
+            </p>
+
+            <div class="social-buttons">
+                <a href="https://youtube.com" target="_blank" class="social-btn youtube">
+                    <i class="fab fa-youtube"></i> YouTube
+                </a>
+                <a href="https://discord.com" target="_blank" class="social-btn discord">
+                    <i class="fab fa-discord"></i> Discord
+                </a>
+                <a href="https://t.me" target="_blank" class="social-btn telegram">
+                    <i class="fab fa-telegram"></i> Telegram
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <footer>&copy; 2026 Misha678 - Все права защищены</footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeBtn = document.getElementById('themeToggle');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+            const htmlElement = document.documentElement;
+
+            if (!themeBtn || !themeIcon || !themeText) return;
+
+            function updateThemeUI(theme) {
+                if (theme === 'dark') {
+                    themeIcon.textContent = '☀️';
+                    themeText.textContent = 'Светлая';
+                } else {
+                    themeIcon.textContent = '🌙';
+                    themeText.textContent = 'Тёмная';
+                }
+            }
+
+            const currentTheme = htmlElement.getAttribute('data-theme') || 'dark';
+            updateThemeUI(currentTheme);
+
+            themeBtn.addEventListener('click', () => {
+                const activeTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = activeTheme === 'dark' ? 'light' : 'dark';
+                
+                htmlElement.setAttribute('data-theme', newTheme);
+                updateThemeUI(newTheme);
+
+                try {
+                    localStorage.setItem('theme', newTheme);
+                } catch (e) {
+                    console.warn('Не удалось сохранить тему:', e);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
